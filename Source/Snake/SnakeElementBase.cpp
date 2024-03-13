@@ -3,8 +3,8 @@
 
 #include "SnakeElementBase.h"
 #include "PaperFlipbookComponent.h"
+#include "PaperFlipbook.h"
 #include "Components/BoxComponent.h"
-
 #include "SnakeBase.h"
 
 ASnakeElementBase::ASnakeElementBase()

@@ -41,7 +41,7 @@ void ASnakeBase::Tick(float DeltaTime)
 */
 FVector ASnakeBase::TranslateXYToXYZ(FVector2D XYVector)
 {
-	return FVector(XYVector.X, 5, XYVector.Y);
+	return FVector(XYVector.X, 2, XYVector.Y);
 }
 
 void ASnakeBase::SetMovementDirection(FVector2D MovementVector)
@@ -76,27 +76,42 @@ void ASnakeBase::SetMovementDirection(FVector2D MovementVector)
 
 void ASnakeBase::Move()
 {
-	FVector MovementVector(FVector::ZeroVector);
+	FVector2D MovementVector2D(FVector2D::ZeroVector);
 
 	switch (LastMoveDirection) {
 	case EMovementDirection::UP:
-		MovementVector.X += ElementSize;
+		MovementVector2D.X += ElementSize;
 		break;
 	case EMovementDirection::DOWN:
-		MovementVector.X -= ElementSize;
+		MovementVector2D.X -= ElementSize;
 		break;
 	case EMovementDirection::RIGHT:
-		MovementVector.Y += ElementSize;
+		MovementVector2D.Y += ElementSize;
 		break;
 	case EMovementDirection::LEFT:
-		MovementVector.Y -= ElementSize;
+		MovementVector2D.Y -= ElementSize;
 		break;
 	}
+	FVector MovementVector = TranslateXYToXYZ(MovementVector2D);
 
 	for (int i = SnakeElements.Num() - 1; i > 0; --i)
 	{
-		
+		//SnakeElements[i]->Sprite->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		auto CurElement = SnakeElements[i];
+		auto PrevElement = SnakeElements[i - 1];
+
+		FVector NewLocation = PrevElement->GetActorLocation();
+		CurElement->SetActorLocation(NewLocation);
+
+		//if (!CurElement->Sprite->GetVisibleFlag())
+		//{
+		//	CurElement->Sprite->SetVisibility(true);
+		//	PrevElement->Sprite->SetVisibility(true);
+		//}
 	}
+	// Move the head
+	SnakeElements[0]->AddActorWorldOffset(MovementVector);
+	//SnakeElements[0]->Sprite->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 }
 
 void ASnakeBase::MakeStartSnake()

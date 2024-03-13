@@ -7,6 +7,7 @@
 #include "SnakeElementBase.generated.h"
 
 class UPaperFlipbookComponent;
+class UPaperFlipbook;
 class ASnakeBase;
 class UBoxComponent;
 
@@ -22,7 +23,7 @@ public:
 	ASnakeElementBase();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sprite")
-	UPaperFlipbookComponent* Sprite;
+	class UPaperFlipbookComponent* Sprite;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sprite")
 	class UPaperFlipbook* Anim;
