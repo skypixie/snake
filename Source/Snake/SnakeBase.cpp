@@ -160,4 +160,20 @@ void ASnakeBase::MakeStartSnake()
 void ASnakeBase::SnakeElementOverlap(ASnakeElementBase* OverlappedBlock, AActor* Other)
 {
 	GEngine->AddOnScreenDebugMessage(-1, 10, FColor::Cyan, TEXT("Overlap"));
+	if (IsValid(OverlappedBlock))
+	{
+		int32 ElemIndex = 0;
+		if (SnakeElements.Find(OverlappedBlock, ElemIndex))
+		{
+			bool bIsFirst = ElemIndex == 0;
+			IInteractable* InteractableInterface = Cast<IInteractable>(Other);
+
+			// can't use IsValid cuz interface is not an actor so just check if pointer is not null
+			if (InteractableInterface && bIsFirst)
+			{
+				InteractableInterface->Interact(this, bIsFirst);
+			}
+		}
+	}
+
 }
