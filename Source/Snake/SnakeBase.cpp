@@ -4,6 +4,8 @@
 #include "SnakeBase.h"
 #include "SnakeElementBase.h"
 
+#include "PaperFlipbookComponent.h"
+
 // Sets default values
 ASnakeBase::ASnakeBase()
 {
@@ -14,6 +16,7 @@ ASnakeBase::ASnakeBase()
 	ElementSize = 100.f;
 	SnakeStartSize = 3;
 	TickInterval = 0.5f;
+	CanTurn = true;
 }
 
 // Called when the game starts or when spawned
@@ -41,13 +44,21 @@ void ASnakeBase::Tick(float DeltaTime)
 */
 FVector ASnakeBase::TranslateXYToXYZ(FVector2D XYVector)
 {
+	// map Y is 0 so we need to set snakes Y to 2 so rendering doesn't look glitchy
 	return FVector(XYVector.X, 2, XYVector.Y);
 }
 
 void ASnakeBase::SetMovementDirection(FVector2D MovementVector)
 {
+	// GEngine->AddOnScreenDebugMessage(-1, 10, FColor::Cyan, FString::Printf(TEXT("%f %f"), MovementVector.X, MovementVector.Y));
 	if (MovementVector.X)
 	{
+		if (
+			LastMoveDirection == EMovementDirection::LEFT
+			|| LastMoveDirection == EMovementDirection::RIGHT
+			|| !CanTurn
+			) return;
+
 		int MoveVal = MovementVector.X;
 		switch (MoveVal)
 		{
@@ -58,9 +69,17 @@ void ASnakeBase::SetMovementDirection(FVector2D MovementVector)
 			LastMoveDirection = EMovementDirection::LEFT;
 			break;
 		}
+		CanTurn = false;
 	}
-	else
+
+	if (MovementVector.Y)
 	{
+		if (
+			LastMoveDirection == EMovementDirection::UP
+			|| LastMoveDirection == EMovementDirection::DOWN
+			|| !CanTurn
+			) return;
+
 		int MoveVal = MovementVector.Y;
 		switch (MoveVal)
 		{
@@ -71,6 +90,7 @@ void ASnakeBase::SetMovementDirection(FVector2D MovementVector)
 			LastMoveDirection = EMovementDirection::DOWN;
 			break;
 		}
+		CanTurn = false;
 	}
 }
 
@@ -79,16 +99,16 @@ void ASnakeBase::Move()
 	FVector2D MovementVector2D(FVector2D::ZeroVector);
 
 	switch (LastMoveDirection) {
-	case EMovementDirection::UP:
+	case EMovementDirection::RIGHT:
 		MovementVector2D.X += ElementSize;
 		break;
-	case EMovementDirection::DOWN:
+	case EMovementDirection::LEFT:
 		MovementVector2D.X -= ElementSize;
 		break;
-	case EMovementDirection::RIGHT:
+	case EMovementDirection::UP:
 		MovementVector2D.Y += ElementSize;
 		break;
-	case EMovementDirection::LEFT:
+	case EMovementDirection::DOWN:
 		MovementVector2D.Y -= ElementSize;
 		break;
 	}
@@ -96,22 +116,23 @@ void ASnakeBase::Move()
 
 	for (int i = SnakeElements.Num() - 1; i > 0; --i)
 	{
-		//SnakeElements[i]->Sprite->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		SnakeElements[i]->Sprite->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 		auto CurElement = SnakeElements[i];
 		auto PrevElement = SnakeElements[i - 1];
 
 		FVector NewLocation = PrevElement->GetActorLocation();
 		CurElement->SetActorLocation(NewLocation);
 
-		//if (!CurElement->Sprite->GetVisibleFlag())
-		//{
-		//	CurElement->Sprite->SetVisibility(true);
-		//	PrevElement->Sprite->SetVisibility(true);
-		//}
+		if (!CurElement->Sprite->GetVisibleFlag())
+		{
+			CurElement->Sprite->SetVisibility(true);
+			PrevElement->Sprite->SetVisibility(true);
+		}
 	}
 	// Move the head
 	SnakeElements[0]->AddActorWorldOffset(MovementVector);
-	//SnakeElements[0]->Sprite->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	CanTurn = true;
+	SnakeElements[0]->Sprite->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 }
 
 void ASnakeBase::MakeStartSnake()
@@ -122,6 +143,7 @@ void ASnakeBase::MakeStartSnake()
 		FVector NewLocation(TranslateXYToXYZ(NewLocation2D));
 		FTransform NewTransform(NewLocation);
 		ASnakeElementBase* NewSnakeElem = GetWorld()->SpawnActor<ASnakeElementBase>(SnakeElementClass, NewTransform);
+		NewSnakeElem->Sprite->SetPlayRate(TickInterval * 2);
 
 		if (NewSnakeElem)
 		{
@@ -137,5 +159,5 @@ void ASnakeBase::MakeStartSnake()
 
 void ASnakeBase::SnakeElementOverlap(ASnakeElementBase* OverlappedBlock, AActor* Other)
 {
-
+	GEngine->AddOnScreenDebugMessage(-1, 10, FColor::Cyan, TEXT("Overlap"));
 }

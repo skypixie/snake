@@ -62,7 +62,7 @@ void APlayerPawnBase::CreateSnakeActor()
 
 void APlayerPawnBase::HandleInput(const FInputActionValue& Value)
 {
-	if (Controller != nullptr)
+	if (Controller != nullptr && IsValid(SnakeActor))
 	{
 		const FVector2D MovementValue = Value.Get<FVector2D>();
 		SnakeActor->SetMovementDirection(MovementValue);

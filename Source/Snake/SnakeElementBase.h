@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "PaperSpriteActor.h"
+#include "Interactable.h"
 #include "SnakeElementBase.generated.h"
 
 class UPaperFlipbookComponent;
@@ -15,7 +16,7 @@ class UBoxComponent;
  * 
  */
 UCLASS()
-class SNAKE_API ASnakeElementBase : public APaperSpriteActor
+class SNAKE_API ASnakeElementBase : public APaperSpriteActor, public IInteractable
 {
 	GENERATED_BODY()
 
@@ -28,7 +29,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sprite")
 	class UPaperFlipbook* Anim;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	ASnakeBase* SnakeOwner;
 
 public:
@@ -38,11 +39,12 @@ public:
 	void SetFirstElemType();
 	void SetFirstElemType_Implementation();
 
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable)
 	void HandleBeginOverlap(UPrimitiveComponent* OverlappedComponent,
 		AActor* OtherActor,
 		UPrimitiveComponent* OtherComponent,
 		int32 OtherBodyIndex,
 		bool bFromSweep);
 
+	virtual void Interact(AActor* Interactor, bool bIsHead) override;
 };

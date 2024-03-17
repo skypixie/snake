@@ -15,11 +15,14 @@ ASnakeElementBase::ASnakeElementBase()
 	{
 		Sprite->SetFlipbook(Anim);
 	}
+	Sprite->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	Sprite->SetCollisionResponseToAllChannels(ECR_Overlap);
 }
 
 void ASnakeElementBase::SetFirstElemType_Implementation()
 {
-	
+	// DOESN'T WORK
+	//Sprite->OnComponentBeginOverlap.AddDynamic(this, &ASnakeElementBase::HandleBeginOverlap);
 }
 
 void ASnakeElementBase::HandleBeginOverlap(UPrimitiveComponent* OverlappedComponent,
@@ -32,5 +35,13 @@ void ASnakeElementBase::HandleBeginOverlap(UPrimitiveComponent* OverlappedCompon
 	{
 		SnakeOwner->SnakeElementOverlap(this, OtherActor);
 	}
+}
 
+void ASnakeElementBase::Interact(AActor* Interactor, bool bIsHead)
+{
+	auto Snake = Cast<ASnakeBase>(Interactor);
+	if (IsValid(Snake))
+	{
+		Snake->Destroy();
+	}
 }
