@@ -9,27 +9,32 @@
 
 ASnakeElementBase::ASnakeElementBase()
 {
+	CollisionMesh = CreateDefaultSubobject<UBoxComponent>(TEXT("Collision"));
+	CollisionMesh->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	CollisionMesh->SetCollisionResponseToAllChannels(ECR_Overlap);
+	CollisionMesh->bDynamicObstacle = true;
+	CollisionMesh->SetupAttachment(GetRootComponent());
+
 	Sprite = CreateDefaultSubobject<UPaperFlipbookComponent>(TEXT("Flipbook"));
-	Sprite->SetupAttachment(GetRootComponent());
+	Sprite->SetupAttachment(CollisionMesh);
+
 	if (Sprite)
 	{
 		Sprite->SetFlipbook(Anim);
 	}
-	Sprite->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
-	Sprite->SetCollisionResponseToAllChannels(ECR_Overlap);
 }
 
 void ASnakeElementBase::SetFirstElemType_Implementation()
 {
-	// DOESN'T WORK
-	//Sprite->OnComponentBeginOverlap.AddDynamic(this, &ASnakeElementBase::HandleBeginOverlap);
+	CollisionMesh->OnComponentBeginOverlap.AddDynamic(this, &ASnakeElementBase::HandleHeadOverlap);
 }
 
-void ASnakeElementBase::HandleBeginOverlap(UPrimitiveComponent* OverlappedComponent,
+void ASnakeElementBase::HandleHeadOverlap(UPrimitiveComponent* OverlappedComponent,
 	AActor* OtherActor,
 	UPrimitiveComponent* OtherComponent,
 	int32 OtherBodyIndex,
-	bool bFromSweep)
+	bool bFromSweep,
+	const FHitResult& HitResult)
 {
 	if (IsValid(SnakeOwner))
 	{

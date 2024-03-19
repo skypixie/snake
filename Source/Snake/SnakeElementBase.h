@@ -30,7 +30,19 @@ public:
 	class UPaperFlipbook* Anim;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UBoxComponent* CollisionMesh;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	ASnakeBase* SnakeOwner;
+
+protected:
+	UFUNCTION()
+	void HandleHeadOverlap(UPrimitiveComponent* OverlappedComponent,
+		AActor* OtherActor,
+		UPrimitiveComponent* OtherComponent,
+		int32 OtherBodyIndex,
+		bool bFromSweep,
+		const FHitResult& HitResult);
 
 public:
 	// ----- FUNCTIONS -----
@@ -38,13 +50,6 @@ public:
 	UFUNCTION(BlueprintNativeEvent)
 	void SetFirstElemType();
 	void SetFirstElemType_Implementation();
-
-	UFUNCTION(BlueprintCallable)
-	void HandleBeginOverlap(UPrimitiveComponent* OverlappedComponent,
-		AActor* OtherActor,
-		UPrimitiveComponent* OtherComponent,
-		int32 OtherBodyIndex,
-		bool bFromSweep);
 
 	virtual void Interact(AActor* Interactor, bool bIsHead) override;
 };

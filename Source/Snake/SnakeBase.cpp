@@ -5,6 +5,7 @@
 #include "SnakeElementBase.h"
 
 #include "PaperFlipbookComponent.h"
+#include "Components/BoxComponent.h"
 
 // Sets default values
 ASnakeBase::ASnakeBase()
@@ -116,7 +117,7 @@ void ASnakeBase::Move()
 
 	for (int i = SnakeElements.Num() - 1; i > 0; --i)
 	{
-		SnakeElements[i]->Sprite->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		SnakeElements[i]->CollisionMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 		auto CurElement = SnakeElements[i];
 		auto PrevElement = SnakeElements[i - 1];
 
@@ -132,7 +133,7 @@ void ASnakeBase::Move()
 	// Move the head
 	SnakeElements[0]->AddActorWorldOffset(MovementVector);
 	CanTurn = true;
-	SnakeElements[0]->Sprite->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	SnakeElements[0]->CollisionMesh->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 }
 
 void ASnakeBase::MakeStartSnake()
