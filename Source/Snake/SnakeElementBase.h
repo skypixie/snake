@@ -52,4 +52,7 @@ public:
 	void SetFirstElemType_Implementation();
 
 	virtual void Interact(AActor* Interactor, bool bIsHead) override;
+
+	UFUNCTION()
+	void ToggleCollision();
 };

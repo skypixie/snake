@@ -12,7 +12,6 @@ ASnakeElementBase::ASnakeElementBase()
 	CollisionMesh = CreateDefaultSubobject<UBoxComponent>(TEXT("Collision"));
 	CollisionMesh->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 	CollisionMesh->SetCollisionResponseToAllChannels(ECR_Overlap);
-	CollisionMesh->bDynamicObstacle = true;
 	CollisionMesh->SetupAttachment(GetRootComponent());
 
 	Sprite = CreateDefaultSubobject<UPaperFlipbookComponent>(TEXT("Flipbook"));
@@ -47,6 +46,19 @@ void ASnakeElementBase::Interact(AActor* Interactor, bool bIsHead)
 	auto Snake = Cast<ASnakeBase>(Interactor);
 	if (IsValid(Snake))
 	{
+		GEngine->AddOnScreenDebugMessage(-1, 10, FColor::Cyan, TEXT("SnakeBase interact"));
 		Snake->Destroy();
+	}
+}
+
+void ASnakeElementBase::ToggleCollision()
+{
+	if (CollisionMesh->GetCollisionEnabled() == ECollisionEnabled::NoCollision)
+	{
+		CollisionMesh->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	}
+	else
+	{
+		CollisionMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	}
 }

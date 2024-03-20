@@ -3,6 +3,7 @@
 
 #include "SnakeBase.h"
 #include "SnakeElementBase.h"
+#include "Interactable.h"
 
 #include "PaperFlipbookComponent.h"
 #include "Components/BoxComponent.h"
@@ -115,9 +116,9 @@ void ASnakeBase::Move()
 	}
 	FVector MovementVector = TranslateXYToXYZ(MovementVector2D);
 
+	SnakeElements[0]->ToggleCollision();
 	for (int i = SnakeElements.Num() - 1; i > 0; --i)
 	{
-		SnakeElements[i]->CollisionMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 		auto CurElement = SnakeElements[i];
 		auto PrevElement = SnakeElements[i - 1];
 
@@ -161,6 +162,7 @@ void ASnakeBase::MakeStartSnake()
 void ASnakeBase::SnakeElementOverlap(ASnakeElementBase* OverlappedBlock, AActor* Other)
 {
 	GEngine->AddOnScreenDebugMessage(-1, 10, FColor::Cyan, TEXT("Overlap"));
+
 	if (IsValid(OverlappedBlock))
 	{
 		int32 ElemIndex = 0;
@@ -176,5 +178,4 @@ void ASnakeBase::SnakeElementOverlap(ASnakeElementBase* OverlappedBlock, AActor*
 			}
 		}
 	}
-
 }
