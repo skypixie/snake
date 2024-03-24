@@ -28,6 +28,7 @@ void APlayerPawnBase::BeginPlay()
 	
 	SetActorRotation(FRotator(0, -90, 0));
 	CreateSnakeActor();
+	CreateSpawner();
 }
 
 // Called every frame
@@ -55,11 +56,6 @@ void APlayerPawnBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 	PlayerEI->BindAction(MoveAction, ETriggerEvent::Triggered, this, &APlayerPawnBase::HandleInput);
 }
 
-void APlayerPawnBase::CreateSnakeActor()
-{
-	SnakeActor = GetWorld()->SpawnActor<ASnakeBase>(SnakeActorClass, FTransform());
-}
-
 void APlayerPawnBase::HandleInput(const FInputActionValue& Value)
 {
 	if (Controller != nullptr && IsValid(SnakeActor))
@@ -67,5 +63,23 @@ void APlayerPawnBase::HandleInput(const FInputActionValue& Value)
 		const FVector2D MovementValue = Value.Get<FVector2D>();
 		SnakeActor->SetMovementDirection(MovementValue);
 	}
+}
+
+void APlayerPawnBase::CreateSnakeActor()
+{
+	SnakeActor = GetWorld()->SpawnActor<ASnakeBase>(SnakeActorClass, FTransform());
+	SnakeActor->Owner = this;
+}
+
+void APlayerPawnBase::CreateSpawner()
+{
+	FVector Location(0, 20, 0);
+	Spawner = GetWorld()->SpawnActor<ASpawnerBase>(SpawnerActorClass, FTransform(Location));
+	Spawner->Owner = this;
+}
+
+void APlayerPawnBase::GameOver()
+{
+
 }
 

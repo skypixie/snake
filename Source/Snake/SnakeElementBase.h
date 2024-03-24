@@ -7,8 +7,6 @@
 #include "Interactable.h"
 #include "SnakeElementBase.generated.h"
 
-class UPaperFlipbookComponent;
-class UPaperFlipbook;
 class ASnakeBase;
 class UBoxComponent;
 
@@ -21,7 +19,6 @@ class SNAKE_API ASnakeElementBase : public APaperSpriteActor, public IInteractab
 	GENERATED_BODY()
 
 public:
-	ASnakeElementBase();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sprite")
 	class UPaperFlipbookComponent* Sprite;
@@ -45,6 +42,7 @@ protected:
 		const FHitResult& HitResult);
 
 public:
+	ASnakeElementBase();
 	// ----- FUNCTIONS -----
 
 	UFUNCTION(BlueprintNativeEvent)
@@ -55,4 +53,7 @@ public:
 
 	UFUNCTION()
 	void ToggleCollision();
+
+	UFUNCTION(BlueprintCallable)
+	void UpdateFrameRate();
 };

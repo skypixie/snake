@@ -4,6 +4,7 @@
 #include "SnakeBase.h"
 #include "SnakeElementBase.h"
 #include "Interactable.h"
+#include "PlayerPawnBase.h"
 
 #include "PaperFlipbookComponent.h"
 #include "Components/BoxComponent.h"
@@ -117,6 +118,7 @@ void ASnakeBase::Move()
 	FVector MovementVector = TranslateXYToXYZ(MovementVector2D);
 
 	SnakeElements[0]->ToggleCollision();
+	// Move the body
 	for (int i = SnakeElements.Num() - 1; i > 0; --i)
 	{
 		auto CurElement = SnakeElements[i];
@@ -134,7 +136,7 @@ void ASnakeBase::Move()
 	// Move the head
 	SnakeElements[0]->AddActorWorldOffset(MovementVector);
 	CanTurn = true;
-	SnakeElements[0]->CollisionMesh->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	SnakeElements[0]->ToggleCollision();
 }
 
 void ASnakeBase::MakeStartSnake()
@@ -145,11 +147,11 @@ void ASnakeBase::MakeStartSnake()
 		FVector NewLocation(TranslateXYToXYZ(NewLocation2D));
 		FTransform NewTransform(NewLocation);
 		ASnakeElementBase* NewSnakeElem = GetWorld()->SpawnActor<ASnakeElementBase>(SnakeElementClass, NewTransform);
-		NewSnakeElem->Sprite->SetPlayRate(TickInterval * 2);
 
 		if (NewSnakeElem)
 		{
 			NewSnakeElem->SnakeOwner = this;
+			NewSnakeElem->UpdateFrameRate();
 			int32 ElemIndex = SnakeElements.Add(NewSnakeElem);
 			if (ElemIndex == 0)
 			{
@@ -161,7 +163,7 @@ void ASnakeBase::MakeStartSnake()
 
 void ASnakeBase::SnakeElementOverlap(ASnakeElementBase* OverlappedBlock, AActor* Other)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 10, FColor::Cyan, TEXT("Overlap"));
+	// GEngine->AddOnScreenDebugMessage(-1, 10, FColor::Cyan, TEXT("Overlap"));
 
 	if (IsValid(OverlappedBlock))
 	{
@@ -176,6 +178,34 @@ void ASnakeBase::SnakeElementOverlap(ASnakeElementBase* OverlappedBlock, AActor*
 			{
 				InteractableInterface->Interact(this, bIsFirst);
 			}
+			// The map's border
+			else if (!InteractableInterface && bIsFirst)
+			{
+				Owner->GameOver();
+			}
 		}
+	}
+}
+
+void ASnakeBase::IncreaseSnakeSpeed()
+{
+	SetActorTickInterval(GetActorTickInterval() * 1.2f);
+	for (auto SnakeElement : SnakeElements)
+	{
+		SnakeElement->UpdateFrameRate();
+	}
+}
+
+void ASnakeBase::AddSnakeElement()
+{
+	FVector NewLocation = SnakeElements[SnakeElements.Num() - 1]->GetActorLocation();
+	FTransform NewTransform(NewLocation);
+	ASnakeElementBase* NewSnakeElem = GetWorld()->SpawnActor<ASnakeElementBase>(SnakeElementClass, NewTransform);
+	if (NewSnakeElem)
+	{
+		NewSnakeElem->SnakeOwner = this;
+		NewSnakeElem->UpdateFrameRate();
+		NewSnakeElem->Sprite->SetVisibility(false);
+		int32 ElemIndex = SnakeElements.Add(NewSnakeElem);
 	}
 }

@@ -34,8 +34,11 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<ASnakeBase> SnakeActorClass;
 
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<ASpawnerBase> SpawnerActorClass;
+
 	UPROPERTY()
-	ASpawnerBase* ItemSpawner;
+	ASpawnerBase* Spawner;
 
 protected:
 	// Called when the game starts or when spawned
@@ -59,4 +62,10 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void HandleInput(const FInputActionValue& Value);
+
+	UFUNCTION()
+	void CreateSpawner();
+
+	UFUNCTION(BlueprintCallable)
+	void GameOver();
 };

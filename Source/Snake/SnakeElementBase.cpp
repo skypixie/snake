@@ -46,7 +46,7 @@ void ASnakeElementBase::Interact(AActor* Interactor, bool bIsHead)
 	auto Snake = Cast<ASnakeBase>(Interactor);
 	if (IsValid(Snake))
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 10, FColor::Cyan, TEXT("SnakeBase interact"));
+		// GEngine->AddOnScreenDebugMessage(-1, 10, FColor::Cyan, TEXT("SnakeBase interact"));
 		Snake->Destroy();
 	}
 }
@@ -61,4 +61,9 @@ void ASnakeElementBase::ToggleCollision()
 	{
 		CollisionMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	}
+}
+
+void ASnakeElementBase::UpdateFrameRate()
+{
+	Sprite->SetPlayRate((SnakeOwner->TickInterval) / (Sprite->GetFlipbookLengthInFrames()) * 2);
 }

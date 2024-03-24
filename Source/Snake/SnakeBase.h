@@ -7,6 +7,7 @@
 #include "SnakeBase.generated.h"
 
 class ASnakeElementBase;
+class APlayerPawnBase;
 
 UENUM()
 enum class EMovementDirection
@@ -26,6 +27,8 @@ class SNAKE_API ASnakeBase : public AActor
 public:	
 	// Sets default values for this actor's properties
 	ASnakeBase();
+
+	APlayerPawnBase* Owner;
 
 	UPROPERTY(EditDefaultsOnly)
 	float ElementSize;
@@ -70,5 +73,11 @@ public:
 
 	UFUNCTION()
 	void SnakeElementOverlap(ASnakeElementBase* OverlappedBlock, AActor* Other);
+
+	UFUNCTION(BlueprintCallable)
+	void IncreaseSnakeSpeed();
+
+	UFUNCTION(BlueprintCallable)
+	void AddSnakeElement();
 
 };
