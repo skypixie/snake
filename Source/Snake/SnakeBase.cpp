@@ -18,7 +18,7 @@ ASnakeBase::ASnakeBase()
 	LastMoveDirection = EMovementDirection::UP;
 	ElementSize = 100.f;
 	SnakeStartSize = 3;
-	TickInterval = 0.5f;
+	TickInterval = 0.35f;
 	CanTurn = true;
 }
 
@@ -47,8 +47,7 @@ void ASnakeBase::Tick(float DeltaTime)
 */
 FVector ASnakeBase::TranslateXYToXYZ(FVector2D XYVector)
 {
-	// map Y is 0 so we need to set snakes Y to 2 so rendering doesn't look glitchy
-	return FVector(XYVector.X, 2, XYVector.Y);
+	return FVector(XYVector.X, 0, XYVector.Y);
 }
 
 void ASnakeBase::SetMovementDirection(FVector2D MovementVector)
@@ -176,12 +175,8 @@ void ASnakeBase::SnakeElementOverlap(ASnakeElementBase* OverlappedBlock, AActor*
 			// can't use IsValid cuz interface is not an actor so just check if pointer is not null
 			if (InteractableInterface && bIsFirst)
 			{
+				GEngine->AddOnScreenDebugMessage(-1, 10, FColor::Cyan, TEXT("Overlap"));
 				InteractableInterface->Interact(this, bIsFirst);
-			}
-			// The map's border
-			else if (!InteractableInterface && bIsFirst)
-			{
-				Owner->GameOver();
 			}
 		}
 	}
@@ -189,16 +184,18 @@ void ASnakeBase::SnakeElementOverlap(ASnakeElementBase* OverlappedBlock, AActor*
 
 void ASnakeBase::IncreaseSnakeSpeed()
 {
-	SetActorTickInterval(GetActorTickInterval() * 1.2f);
+	SetActorTickInterval(GetActorTickInterval() / 1.1f);
 	for (auto SnakeElement : SnakeElements)
 	{
 		SnakeElement->UpdateFrameRate();
 	}
 }
 
+// Adds element AND increases score AND sets health to 100
 void ASnakeBase::AddSnakeElement()
 {
-	FVector NewLocation = SnakeElements[SnakeElements.Num() - 1]->GetActorLocation();
+	FVector LastElemLocation = SnakeElements[SnakeElements.Num() - 1]->GetActorLocation();
+	FVector NewLocation = {LastElemLocation.X, 2, LastElemLocation.Z};
 	FTransform NewTransform(NewLocation);
 	ASnakeElementBase* NewSnakeElem = GetWorld()->SpawnActor<ASnakeElementBase>(SnakeElementClass, NewTransform);
 	if (NewSnakeElem)
@@ -207,5 +204,7 @@ void ASnakeBase::AddSnakeElement()
 		NewSnakeElem->UpdateFrameRate();
 		NewSnakeElem->Sprite->SetVisibility(false);
 		int32 ElemIndex = SnakeElements.Add(NewSnakeElem);
+		Owner->IncreaseScore();
+		Owner->ResetHealth();
 	}
 }

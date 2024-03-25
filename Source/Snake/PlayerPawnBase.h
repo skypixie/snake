@@ -40,6 +40,16 @@ public:
 	UPROPERTY()
 	ASpawnerBase* Spawner;
 
+	UPROPERTY(BlueprintReadWrite)
+	float SnakeHealth = 100.f;
+
+	UPROPERTY(BlueprintReadWrite)
+	int Score = 0;
+
+	FTimerHandle SnakeDeathTimerHandle;
+
+	int SnakeLifetime = 8;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -49,6 +59,9 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Enhanced Input")
 	UInputAction* MoveAction;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Enhanced Input")
+	UInputAction* StartGameAction;
 
 public:	
 	// Called every frame
@@ -66,6 +79,16 @@ public:
 	UFUNCTION()
 	void CreateSpawner();
 
+	// Basically, it just spawns snake and spawner
+	UFUNCTION()
+	void StartGame();
+
+	UFUNCTION()
+	void EndGame();
+
 	UFUNCTION(BlueprintCallable)
-	void GameOver();
+	void IncreaseScore();
+
+	UFUNCTION(BlueprintCallable)
+	void ResetHealth();
 };

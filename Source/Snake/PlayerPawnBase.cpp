@@ -27,15 +27,12 @@ void APlayerPawnBase::BeginPlay()
 	Super::BeginPlay();
 	
 	SetActorRotation(FRotator(0, -90, 0));
-	CreateSnakeActor();
-	CreateSpawner();
 }
 
 // Called every frame
 void APlayerPawnBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
 
 // Called to bind functionality to input
@@ -54,6 +51,7 @@ void APlayerPawnBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 	UEnhancedInputComponent* PlayerEI = Cast<UEnhancedInputComponent>(PlayerInputComponent);
 	// Bind the actions
 	PlayerEI->BindAction(MoveAction, ETriggerEvent::Triggered, this, &APlayerPawnBase::HandleInput);
+	PlayerEI->BindAction(StartGameAction, ETriggerEvent::Triggered, this, &APlayerPawnBase::StartGame);
 }
 
 void APlayerPawnBase::HandleInput(const FInputActionValue& Value)
@@ -78,8 +76,27 @@ void APlayerPawnBase::CreateSpawner()
 	Spawner->Owner = this;
 }
 
-void APlayerPawnBase::GameOver()
+void APlayerPawnBase::StartGame()
 {
-
+	CreateSnakeActor();
+	CreateSpawner();
+	GetWorldTimerManager().SetTimer(SnakeDeathTimerHandle, this, &APlayerPawnBase::EndGame, SnakeLifetime, false);
 }
 
+void APlayerPawnBase::EndGame()
+{
+	// Will be overridden in blueprint
+	GEngine->AddOnScreenDebugMessage(-1, 10, FColor::Cyan, TEXT("GAME OVER"));
+}
+
+void APlayerPawnBase::IncreaseScore()
+{
+	Score += 10;
+}
+
+void APlayerPawnBase::ResetHealth()
+{
+	SnakeHealth = 100.f;
+	GetWorldTimerManager().ClearTimer(SnakeDeathTimerHandle);
+	GetWorldTimerManager().SetTimer(SnakeDeathTimerHandle, this, &APlayerPawnBase::EndGame, SnakeLifetime, false);
+}

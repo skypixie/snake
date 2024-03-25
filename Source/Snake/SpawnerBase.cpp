@@ -53,7 +53,7 @@ void ASpawnerBase::SpawnItem()
 			GetWorld()->SpawnActor<AFood>(FoodClass, SpawnTransform);
 		}
 
-		GetWorld()->GetTimerManager().SetTimer(SpawnDelayTimerHandle, this, &ASpawnerBase::ResetSpawn, 3.0f, false);
+		GetWorld()->GetTimerManager().SetTimer(SpawnDelayTimerHandle, this, &ASpawnerBase::ResetSpawn, 4.0f, false);
 	}
 }
 
