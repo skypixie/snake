@@ -79,4 +79,7 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void AddSnakeElement();
+
+	UFUNCTION()
+	void GameOver();
 };

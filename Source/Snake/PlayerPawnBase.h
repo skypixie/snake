@@ -85,9 +85,6 @@ public:
 	UFUNCTION()
 	void StartGame();
 
-	UFUNCTION()
-	void EndGame();
-
 	UFUNCTION(BlueprintCallable)
 	void IncreaseScore();
 
@@ -96,4 +93,8 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void ReceiveDamage();
+
+	UFUNCTION(BlueprintNativeEvent)
+	void GameOver();
+	void GameOver_Implementation();
 };

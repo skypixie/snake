@@ -177,10 +177,6 @@ void ASnakeBase::SnakeElementOverlap(ASnakeElementBase* OverlappedBlock, AActor*
 			{
 				InteractableInterface->Interact(this, bIsFirst);
 			}
-			else if (!InteractableInterface && bIsFirst)
-			{
-				GEngine->AddOnScreenDebugMessage(-1, 10, FColor::Cyan, TEXT("Overlap"));
-			}
 		}
 	}
 }
@@ -208,5 +204,14 @@ void ASnakeBase::AddSnakeElement()
 		NewSnakeElem->Sprite->SetVisibility(false);
 		int32 ElemIndex = SnakeElements.Add(NewSnakeElem);
 		Owner->IncreaseScore();
+	}
+}
+
+// just calls owners GameOver function
+void ASnakeBase::GameOver()
+{
+	if (IsValid(Owner))
+	{
+		Owner->GameOver();
 	}
 }

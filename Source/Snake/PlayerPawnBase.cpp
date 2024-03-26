@@ -63,31 +63,34 @@ void APlayerPawnBase::HandleInput(const FInputActionValue& Value)
 	}
 }
 
+void APlayerPawnBase::StartGame()
+{
+	if (!IsValid(SnakeActor))
+	{
+		CreateSnakeActor();
+		CreateSpawner();
+		GetWorldTimerManager().SetTimer(SnakeDeathTimerHandle, this, &APlayerPawnBase::GameOver, SnakeLifetime, false);
+		GetWorldTimerManager().SetTimer(DamageTimerHandle, this, &APlayerPawnBase::ReceiveDamage, 1, true);
+	}
+}
+
 void APlayerPawnBase::CreateSnakeActor()
 {
 	SnakeActor = GetWorld()->SpawnActor<ASnakeBase>(SnakeActorClass, FTransform());
-	SnakeActor->Owner = this;
+	if (IsValid(SnakeActor))
+	{
+		SnakeActor->Owner = this;
+	}
 }
 
 void APlayerPawnBase::CreateSpawner()
 {
 	FVector Location(0, 20, 0);
 	Spawner = GetWorld()->SpawnActor<ASpawnerBase>(SpawnerActorClass, FTransform(Location));
-	Spawner->Owner = this;
-}
-
-void APlayerPawnBase::StartGame()
-{
-	CreateSnakeActor();
-	CreateSpawner();
-	GetWorldTimerManager().SetTimer(SnakeDeathTimerHandle, this, &APlayerPawnBase::EndGame, SnakeLifetime, false);
-	GetWorldTimerManager().SetTimer(DamageTimerHandle, this, &APlayerPawnBase::ReceiveDamage, 1, true);
-}
-
-void APlayerPawnBase::EndGame()
-{
-	// Will be overridden in blueprint
-	GEngine->AddOnScreenDebugMessage(-1, 10, FColor::Cyan, TEXT("GAME OVER"));
+	if (IsValid(Spawner))
+	{
+		Spawner->Owner = this;
+	}
 }
 
 void APlayerPawnBase::IncreaseScore()
@@ -100,10 +103,14 @@ void APlayerPawnBase::ResetHealth()
 {
 	SnakeHealth = 100.f;
 	GetWorldTimerManager().ClearTimer(SnakeDeathTimerHandle);
-	GetWorldTimerManager().SetTimer(SnakeDeathTimerHandle, this, &APlayerPawnBase::EndGame, SnakeLifetime, false);
+	GetWorldTimerManager().SetTimer(SnakeDeathTimerHandle, this, &APlayerPawnBase::GameOver, SnakeLifetime, false);
 }
 
 void APlayerPawnBase::ReceiveDamage()
 {
 	SnakeHealth -= 100 / SnakeLifetime;
+}
+
+void APlayerPawnBase::GameOver_Implementation()
+{
 }
