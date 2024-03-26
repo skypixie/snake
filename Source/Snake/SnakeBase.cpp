@@ -175,8 +175,11 @@ void ASnakeBase::SnakeElementOverlap(ASnakeElementBase* OverlappedBlock, AActor*
 			// can't use IsValid cuz interface is not an actor so just check if pointer is not null
 			if (InteractableInterface && bIsFirst)
 			{
-				GEngine->AddOnScreenDebugMessage(-1, 10, FColor::Cyan, TEXT("Overlap"));
 				InteractableInterface->Interact(this, bIsFirst);
+			}
+			else if (!InteractableInterface && bIsFirst)
+			{
+				GEngine->AddOnScreenDebugMessage(-1, 10, FColor::Cyan, TEXT("Overlap"));
 			}
 		}
 	}
@@ -205,6 +208,5 @@ void ASnakeBase::AddSnakeElement()
 		NewSnakeElem->Sprite->SetVisibility(false);
 		int32 ElemIndex = SnakeElements.Add(NewSnakeElem);
 		Owner->IncreaseScore();
-		Owner->ResetHealth();
 	}
 }

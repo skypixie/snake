@@ -50,6 +50,8 @@ public:
 
 	int SnakeLifetime = 8;
 
+	FTimerHandle DamageTimerHandle;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -91,4 +93,7 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void ResetHealth();
+
+	UFUNCTION(BlueprintCallable)
+	void ReceiveDamage();
 };

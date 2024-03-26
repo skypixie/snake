@@ -79,5 +79,4 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void AddSnakeElement();
-
 };

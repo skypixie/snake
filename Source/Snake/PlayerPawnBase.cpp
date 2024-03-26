@@ -81,6 +81,7 @@ void APlayerPawnBase::StartGame()
 	CreateSnakeActor();
 	CreateSpawner();
 	GetWorldTimerManager().SetTimer(SnakeDeathTimerHandle, this, &APlayerPawnBase::EndGame, SnakeLifetime, false);
+	GetWorldTimerManager().SetTimer(DamageTimerHandle, this, &APlayerPawnBase::ReceiveDamage, 1, true);
 }
 
 void APlayerPawnBase::EndGame()
@@ -92,6 +93,7 @@ void APlayerPawnBase::EndGame()
 void APlayerPawnBase::IncreaseScore()
 {
 	Score += 10;
+	ResetHealth();
 }
 
 void APlayerPawnBase::ResetHealth()
@@ -99,4 +101,9 @@ void APlayerPawnBase::ResetHealth()
 	SnakeHealth = 100.f;
 	GetWorldTimerManager().ClearTimer(SnakeDeathTimerHandle);
 	GetWorldTimerManager().SetTimer(SnakeDeathTimerHandle, this, &APlayerPawnBase::EndGame, SnakeLifetime, false);
+}
+
+void APlayerPawnBase::ReceiveDamage()
+{
+	SnakeHealth -= 100 / SnakeLifetime;
 }
