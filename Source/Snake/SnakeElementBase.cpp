@@ -47,7 +47,7 @@ void ASnakeElementBase::Interact(AActor* Interactor, bool bIsHead)
 	if (IsValid(Snake))
 	{
 		// GEngine->AddOnScreenDebugMessage(-1, 10, FColor::Cyan, TEXT("SnakeBase interact"));
-		Snake->Destroy();
+		Snake->GameOver();
 	}
 }
 
